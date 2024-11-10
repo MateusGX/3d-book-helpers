@@ -3,11 +3,11 @@ import { TabPageApi } from "tweakpane";
 
 export type HelperProps = {
   tab: MutableRefObject<TabPageApi | undefined>;
+  fileLoaded: any | null;
 };
 
 export type HelperRefDefault = {
   exportSTL: (callback: (data: any) => void) => void;
   resetSettings: () => void;
-  importSettings: (data: any) => void;
   exportSettings: (callback: (data: any) => void) => void;
 };

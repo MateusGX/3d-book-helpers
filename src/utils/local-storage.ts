@@ -6,7 +6,7 @@ export const getValue = (key: string, defaultValue: any) => {
   try {
     return { ...defaultValue, ...JSON.parse(value) };
   } catch (e) {
-    return value;
+    return defaultValue;
   }
 };
 
@@ -18,14 +18,22 @@ export const getState = (key: string, defaultValue: HelperTypes) => {
     if (parsed in HelperTypes) return parsed;
     return defaultValue;
   } catch (e) {
-    return value;
+    return defaultValue;
   }
 };
 
 export const setValue = (key: string, value: any) => {
-  localStorage.setItem(key, JSON.stringify(value));
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 export const setState = (key: string, value: HelperTypes) => {
-  localStorage.setItem(key, JSON.stringify(value));
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.error(e);
+  }
 };

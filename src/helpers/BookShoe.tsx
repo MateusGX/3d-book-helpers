@@ -1,4 +1,10 @@
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { Model } from "../components/model";
 import { makeFace, makeTriangle } from "../utils/3d-utils";
 import { HelperProps, HelperRefDefault } from "../models/helper";
@@ -28,7 +34,7 @@ const LOCALSTORAGE_KEYS = {
 };
 
 export const BookShoe = forwardRef<HelperRefDefault, HelperProps>(
-  ({ tab }, ref) => {
+  ({ tab, fileLoaded }, ref) => {
     const [vertices, setVertices] = useState<Float32Array>(
       new Float32Array([])
     );
@@ -42,6 +48,22 @@ export const BookShoe = forwardRef<HelperRefDefault, HelperProps>(
     const [generalData, setGeneralData] = useState(
       getValue(LOCALSTORAGE_KEYS.general, DEFAULT_VALUES.general)
     );
+
+    useEffect(() => {
+      if (!fileLoaded) return;
+      let json = null;
+      try {
+        json = JSON.parse(fileLoaded);
+      } catch (e) {
+        console.error("Invalid JSON file");
+      }
+      if (!json) return;
+      const { book, bookPage, general } = json;
+      setValue(LOCALSTORAGE_KEYS.book, book);
+      setValue(LOCALSTORAGE_KEYS.bookPage, bookPage);
+      setValue(LOCALSTORAGE_KEYS.general, general);
+      location.reload();
+    }, [fileLoaded]);
 
     useEffect(() => {
       if (!tab.current) return;
@@ -123,7 +145,7 @@ export const BookShoe = forwardRef<HelperRefDefault, HelperProps>(
       return () => {};
     }, [tab]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       const marginX = Math.abs(bookData.width - bookPageData.width) / 2;
       const pageMarginX = bookPageData.width + marginX;
 
@@ -499,12 +521,6 @@ export const BookShoe = forwardRef<HelperRefDefault, HelperProps>(
         setValue(LOCALSTORAGE_KEYS.book, DEFAULT_VALUES.book);
         setValue(LOCALSTORAGE_KEYS.bookPage, DEFAULT_VALUES.bookPage);
         setValue(LOCALSTORAGE_KEYS.general, DEFAULT_VALUES.general);
-        location.reload();
-      },
-      importSettings(data: any) {
-        setValue(LOCALSTORAGE_KEYS.book, data.book);
-        setValue(LOCALSTORAGE_KEYS.bookPage, data.bookPage);
-        setValue(LOCALSTORAGE_KEYS.general, data.general);
         location.reload();
       },
       exportSettings(callback: (data: any) => void) {

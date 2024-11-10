@@ -13,25 +13,18 @@ import {
 import { BookShoe } from "./helpers/BookShoe";
 import { HelperRefDefault } from "./models/helper";
 import { saveAs } from "file-saver";
-import { useDropzone } from "react-dropzone";
 import { STLExporter } from "three/addons/exporters/STLExporter.js";
 import * as THREE from "three";
 import { getState, setState } from "./utils/local-storage";
+import { useReadFile } from "./utils/file-load-utils";
 
 const LOCALSTORAGE_KEYS = {
   helperType: "helperType",
 };
 
 function App() {
+  const { getInputProps, fileData, selectFile } = useReadFile();
   const pane = useTweakpane("3D Book Helpers");
-  const { open, getInputProps, acceptedFiles } = useDropzone({
-    noClick: true,
-    noKeyboard: true,
-    maxFiles: 1,
-    accept: {
-      "application/json": [".json"],
-    },
-  });
 
   const tabGeneralPage = useRef<TabPageApi>();
   const refHelper = createRef<HelperRefDefault>();
@@ -40,18 +33,6 @@ function App() {
     LOCALSTORAGE_KEYS.helperType,
     HelperTypes.BOOK_SHOE
   );
-
-  useEffect(() => {
-    if (!acceptedFiles.length) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const data = event.target?.result;
-      if (!data) return;
-      const parsed = JSON.parse(data as string);
-      refHelper.current?.importSettings(parsed);
-    };
-    reader.readAsText(acceptedFiles[0]);
-  }, [acceptedFiles]);
 
   useEffect(() => {
     if (!pane.current) return;
@@ -120,8 +101,7 @@ function App() {
         title: "Import Settings",
       })
       .on("click", () => {
-        console.log("Import Settings");
-        open();
+        selectFile();
       });
 
     advanced
@@ -145,11 +125,17 @@ function App() {
   const renderHelper = useMemo(() => {
     switch (helperType) {
       case HelperTypes.BOOK_SHOE:
-        return <BookShoe tab={tabGeneralPage} ref={refHelper} />;
+        return (
+          <BookShoe
+            fileLoaded={fileData}
+            tab={tabGeneralPage}
+            ref={refHelper}
+          />
+        );
       default:
         return null;
     }
-  }, [helperType]);
+  }, [helperType, fileData]);
 
   return (
     <div className="app">
