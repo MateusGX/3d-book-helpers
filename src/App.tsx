@@ -17,6 +17,7 @@ import { STLExporter } from "three/addons/exporters/STLExporter.js";
 import * as THREE from "three";
 import { getState, setState } from "./utils/local-storage";
 import { useReadFile } from "./utils/file-load-utils";
+import { BookShoeWithoutWalls } from "./helpers/BookShoeWithoutWalls";
 
 const LOCALSTORAGE_KEYS = {
   helperType: "helperType",
@@ -41,7 +42,13 @@ function App() {
     const helper = current.addBlade({
       view: "list",
       label: "Helper Model",
-      options: [{ text: "Book Shoe", value: HelperTypes.BOOK_SHOE }],
+      options: [
+        { text: "Book Shoe", value: HelperTypes.BOOK_SHOE },
+        {
+          text: "Book Shoe Without Walls",
+          value: HelperTypes.BOOK_SHOE_WITHOUT_WALLS,
+        },
+      ],
       value: helperType,
     }) as ListBladeApi<HelperTypes>;
 
@@ -127,6 +134,14 @@ function App() {
       case HelperTypes.BOOK_SHOE:
         return (
           <BookShoe
+            fileLoaded={fileData}
+            tab={tabGeneralPage}
+            ref={refHelper}
+          />
+        );
+      case HelperTypes.BOOK_SHOE_WITHOUT_WALLS:
+        return (
+          <BookShoeWithoutWalls
             fileLoaded={fileData}
             tab={tabGeneralPage}
             ref={refHelper}

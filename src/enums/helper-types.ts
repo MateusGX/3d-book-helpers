@@ -1,3 +1,4 @@
 export enum HelperTypes {
   BOOK_SHOE = "BOOK_SHOE",
+  BOOK_SHOE_WITHOUT_WALLS = "BOOK_SHOE_WITHOUT_WALLS",
 }

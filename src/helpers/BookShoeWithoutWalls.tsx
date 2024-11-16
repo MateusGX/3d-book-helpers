@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import { Model } from "../components/model";
-import { makeFace, makeTriangle } from "../utils/3d-utils";
+import { makeFace } from "../utils/3d-utils";
 import { HelperProps, HelperRefDefault } from "../models/helper";
 import { getValue, setValue } from "../utils/local-storage";
 
@@ -33,7 +33,7 @@ const LOCALSTORAGE_KEYS = {
   general: "general",
 };
 
-export const BookShoe = forwardRef<HelperRefDefault, HelperProps>(
+export const BookShoeWithoutWalls = forwardRef<HelperRefDefault, HelperProps>(
   ({ tab, fileLoaded }, ref) => {
     const [vertices, setVertices] = useState<Float32Array>(
       new Float32Array([])
@@ -153,22 +153,28 @@ export const BookShoe = forwardRef<HelperRefDefault, HelperProps>(
       const pageMarginZ = bookPageData.depth + marginZ;
 
       const shoeHeight = generalData.baseHeight + bookPageData.margin.y;
-      const wallsMargin = generalData.wallWidth;
 
       const bookPageMarginX = bookPageData.margin.x - marginZ;
+
+      console.log({
+        marginX,
+        pageMarginX,
+        marginZ,
+        pageMarginZ,
+        shoeHeight,
+        bookData,
+        bookPageData,
+        generalData,
+      });
 
       setVertices(
         new Float32Array([
           // base
           ...makeFace(
-            [-wallsMargin, 0, -generalData.wallWidth - bookPageMarginX],
-            [
-              bookData.width + wallsMargin,
-              0,
-              -generalData.wallWidth - bookPageMarginX,
-            ],
-            [-wallsMargin, 0, bookData.depth],
-            [bookData.width + wallsMargin, 0, bookData.depth]
+            [0, 0, -generalData.wallWidth - bookPageMarginX],
+            [bookData.width, 0, -generalData.wallWidth - bookPageMarginX],
+            [0, 0, bookData.depth],
+            [bookData.width, 0, bookData.depth]
           ),
 
           ...makeFace(
@@ -202,34 +208,26 @@ export const BookShoe = forwardRef<HelperRefDefault, HelperProps>(
           ),
 
           ...makeFace(
-            [-wallsMargin, generalData.baseHeight, bookData.depth],
-            [
-              bookData.width + wallsMargin,
-              generalData.baseHeight,
-              bookData.depth,
-            ],
-            [-wallsMargin, generalData.baseHeight, pageMarginZ],
-            [bookData.width + wallsMargin, generalData.baseHeight, pageMarginZ]
+            [0, generalData.baseHeight, bookData.depth],
+            [bookData.width, generalData.baseHeight, bookData.depth],
+            [0, generalData.baseHeight, pageMarginZ],
+            [bookData.width, generalData.baseHeight, pageMarginZ]
           ),
 
           // back
           ...makeFace(
             [
-              -wallsMargin,
-              shoeHeight + generalData.wallHeight,
-              -generalData.wallWidth - bookPageMarginX,
-            ],
-            [
-              bookData.width + wallsMargin,
-              shoeHeight + generalData.wallHeight,
-              -generalData.wallWidth - bookPageMarginX,
-            ],
-            [-wallsMargin, 0, -generalData.wallWidth - bookPageMarginX],
-            [
-              bookData.width + wallsMargin,
               0,
+              shoeHeight + generalData.wallHeight,
               -generalData.wallWidth - bookPageMarginX,
-            ]
+            ],
+            [
+              bookData.width,
+              shoeHeight + generalData.wallHeight,
+              -generalData.wallWidth - bookPageMarginX,
+            ],
+            [0, 0, -generalData.wallWidth - bookPageMarginX],
+            [bookData.width, 0, -generalData.wallWidth - bookPageMarginX]
           ),
 
           // back left
@@ -238,6 +236,20 @@ export const BookShoe = forwardRef<HelperRefDefault, HelperProps>(
             [marginX, generalData.baseHeight, -bookPageMarginX],
             [0, shoeHeight + generalData.wallHeight, -bookPageMarginX],
             [marginX, shoeHeight + generalData.wallHeight, -bookPageMarginX]
+          ),
+          ...makeFace(
+            [
+              0,
+              generalData.baseHeight,
+              -generalData.wallWidth - bookPageMarginX,
+            ],
+            [0, generalData.baseHeight, -bookPageMarginX],
+            [
+              0,
+              shoeHeight + generalData.wallHeight,
+              -generalData.wallWidth - bookPageMarginX,
+            ],
+            [0, shoeHeight + generalData.wallHeight, -bookPageMarginX]
           ),
 
           // back right
@@ -255,66 +267,68 @@ export const BookShoe = forwardRef<HelperRefDefault, HelperProps>(
               -bookPageMarginX,
             ]
           ),
-
           ...makeFace(
-            [-wallsMargin, 0, bookData.depth],
-            [bookData.width + wallsMargin, 0, bookData.depth],
-            [-wallsMargin, generalData.baseHeight, bookData.depth],
+            [bookData.width, generalData.baseHeight, -bookPageMarginX],
             [
-              bookData.width + wallsMargin,
+              bookData.width,
               generalData.baseHeight,
-              bookData.depth,
+              -generalData.wallWidth - bookPageMarginX,
+            ],
+            [
+              bookData.width,
+              shoeHeight + generalData.wallHeight,
+              -bookPageMarginX,
+            ],
+            [
+              bookData.width,
+              shoeHeight + generalData.wallHeight,
+              -generalData.wallWidth - bookPageMarginX,
             ]
           ),
+
           ...makeFace(
-            [-wallsMargin, 0, -generalData.wallWidth - bookPageMarginX],
-            [-wallsMargin, 0, bookData.depth],
+            [0, 0, bookData.depth],
+            [bookData.width, 0, bookData.depth],
+            [0, generalData.baseHeight, bookData.depth],
+            [bookData.width, generalData.baseHeight, bookData.depth]
+          ),
+          ...makeFace(
+            [0, 0, -generalData.wallWidth - bookPageMarginX],
+            [0, 0, bookData.depth],
             [
-              -wallsMargin,
+              0,
               generalData.baseHeight,
               -generalData.wallWidth - bookPageMarginX,
             ],
-            [-wallsMargin, generalData.baseHeight, bookData.depth]
+            [0, generalData.baseHeight, bookData.depth]
           ),
           ...makeFace(
             [
-              bookData.width + wallsMargin,
+              bookData.width,
               generalData.baseHeight,
               -generalData.wallWidth - bookPageMarginX,
             ],
-            [
-              bookData.width + wallsMargin,
-              generalData.baseHeight,
-              bookData.depth,
-            ],
-            [
-              bookData.width + wallsMargin,
-              0,
-              -generalData.wallWidth - bookPageMarginX,
-            ],
-            [bookData.width + wallsMargin, 0, bookData.depth]
+            [bookData.width, generalData.baseHeight, bookData.depth],
+            [bookData.width, 0, -generalData.wallWidth - bookPageMarginX],
+            [bookData.width, 0, bookData.depth]
           ),
           // shoe
 
           // top back
           ...makeFace(
+            [0, shoeHeight + generalData.wallHeight, -bookPageMarginX],
             [
-              -wallsMargin,
+              bookData.width,
               shoeHeight + generalData.wallHeight,
               -bookPageMarginX,
             ],
             [
-              bookData.width + wallsMargin,
-              shoeHeight + generalData.wallHeight,
-              -bookPageMarginX,
-            ],
-            [
-              -wallsMargin,
+              0,
               shoeHeight + generalData.wallHeight,
               -generalData.wallWidth - bookPageMarginX,
             ],
             [
-              bookData.width + wallsMargin,
+              bookData.width,
               shoeHeight + generalData.wallHeight,
               -generalData.wallWidth - bookPageMarginX,
             ]
@@ -386,114 +400,6 @@ export const BookShoe = forwardRef<HelperRefDefault, HelperProps>(
             [pageMarginX, shoeHeight, pageMarginZ],
             [pageMarginX, generalData.baseHeight, -bookPageMarginX],
             [pageMarginX, generalData.baseHeight, pageMarginZ]
-          ),
-
-          // walls
-
-          // left wall
-          ...makeFace(
-            [-wallsMargin, generalData.baseHeight, -bookPageMarginX],
-            [
-              -wallsMargin,
-              shoeHeight + generalData.wallHeight,
-              -bookPageMarginX,
-            ],
-            [
-              -wallsMargin,
-              generalData.baseHeight,
-              -generalData.wallWidth - bookPageMarginX,
-            ],
-            [
-              -wallsMargin,
-              shoeHeight + generalData.wallHeight,
-              -generalData.wallWidth - bookPageMarginX,
-            ]
-          ),
-          ...makeTriangle(
-            [0, generalData.baseHeight, -bookPageMarginX],
-            [0, shoeHeight + generalData.wallHeight, -bookPageMarginX],
-            [0, generalData.baseHeight, pageMarginZ]
-          ),
-          ...makeTriangle(
-            [
-              -wallsMargin,
-              shoeHeight + generalData.wallHeight,
-              -bookPageMarginX,
-            ],
-            [-wallsMargin, generalData.baseHeight, -bookPageMarginX],
-
-            [-wallsMargin, generalData.baseHeight, pageMarginZ]
-          ),
-          ...makeFace(
-            [-wallsMargin, generalData.baseHeight, pageMarginZ],
-            [0, generalData.baseHeight, pageMarginZ],
-            [
-              -wallsMargin,
-              shoeHeight + generalData.wallHeight,
-              -bookPageMarginX,
-            ],
-            [0, shoeHeight + generalData.wallHeight, -bookPageMarginX]
-          ),
-
-          // right wall
-          ...makeFace(
-            [
-              bookData.width + wallsMargin,
-              generalData.baseHeight,
-              -generalData.wallWidth - bookPageMarginX,
-            ],
-            [
-              bookData.width + wallsMargin,
-              shoeHeight + generalData.wallHeight,
-              -generalData.wallWidth - bookPageMarginX,
-            ],
-            [
-              bookData.width + wallsMargin,
-              generalData.baseHeight,
-              -bookPageMarginX,
-            ],
-            [
-              bookData.width + wallsMargin,
-              shoeHeight + generalData.wallHeight,
-              -bookPageMarginX,
-            ]
-          ),
-          ...makeTriangle(
-            [
-              bookData.width,
-              shoeHeight + generalData.wallHeight,
-              -bookPageMarginX,
-            ],
-            [bookData.width, generalData.baseHeight, -bookPageMarginX],
-
-            [bookData.width, generalData.baseHeight, pageMarginZ]
-          ),
-          ...makeTriangle(
-            [bookData.width + wallsMargin, generalData.baseHeight, pageMarginZ],
-            [
-              bookData.width + wallsMargin,
-              generalData.baseHeight,
-              -bookPageMarginX,
-            ],
-            [
-              bookData.width + wallsMargin,
-              shoeHeight + generalData.wallHeight,
-              -bookPageMarginX,
-            ]
-          ),
-          ...makeFace(
-            [
-              bookData.width + wallsMargin,
-              shoeHeight + generalData.wallHeight,
-              -bookPageMarginX,
-            ],
-            [
-              bookData.width,
-              shoeHeight + generalData.wallHeight,
-              -bookPageMarginX,
-            ],
-            [bookData.width + wallsMargin, generalData.baseHeight, pageMarginZ],
-            [bookData.width, generalData.baseHeight, pageMarginZ]
           ),
         ])
       );
