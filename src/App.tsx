@@ -18,6 +18,7 @@ import * as THREE from "three";
 import { getState, setState } from "./utils/local-storage";
 import { useReadFile } from "./utils/file-load-utils";
 import { BookShoeWithoutWalls } from "./helpers/BookShoeWithoutWalls";
+import { BookShoeOnlyPages } from "./helpers/BookShoeOnlyPages";
 
 const LOCALSTORAGE_KEYS = {
   helperType: "helperType",
@@ -47,6 +48,10 @@ function App() {
         {
           text: "Book Shoe Without Walls",
           value: HelperTypes.BOOK_SHOE_WITHOUT_WALLS,
+        },
+        {
+          text: "Book Shoe Only Pages",
+          value: HelperTypes.BOOK_SHOE_ONLY_PAGES,
         },
       ],
       value: helperType,
@@ -142,6 +147,14 @@ function App() {
       case HelperTypes.BOOK_SHOE_WITHOUT_WALLS:
         return (
           <BookShoeWithoutWalls
+            fileLoaded={fileData}
+            tab={tabGeneralPage}
+            ref={refHelper}
+          />
+        );
+      case HelperTypes.BOOK_SHOE_ONLY_PAGES:
+        return (
+          <BookShoeOnlyPages
             fileLoaded={fileData}
             tab={tabGeneralPage}
             ref={refHelper}
